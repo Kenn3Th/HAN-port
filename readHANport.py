@@ -8,7 +8,7 @@ import logging as log
 import codecs                                                    
                                   
 device = ser.Serial( 
-        port='/dev/ttyS1',
+        port='/dev/ttyS0',
         baudrate=9600,
         stopbits=ser.STOPBITS_ONE,
         bytesize=ser.EIGHTBITS,   
@@ -18,17 +18,21 @@ totBits = 1024
 log.basicConfig(filename='HAN.log', level=log.DEBUG)
 log.info('Connected to: ' + device.portstr)         
                                                     
-print("Starter for alltid lokka")                   
-while True:                                         
-    bytes = device.read(totBits)             
-    if bytes:
-        log.info('Reading from HAN-port')
-        print('Got %d bytes:' % len(bytes))
-        log.info('Got %d bytes:' % len(bytes))
-        msg = ('%02x' % int(codecs.encode(bytes, 'hex'), 16)).upper()
-        msg = ' '.join(msg[i:i+2] for i in range(0, len(msg), 2))                      
-        print(msg)              
-        log.info(msg)                   
-        log.info('Stop reading from HAN-port')
-    else:                                     
-        log.warning('Got nothing!')   
+print("Starting forever loop")
+try:
+    while True:                                         
+        bytes = device.read(totBits)             
+        if bytes:
+            print("Exit by pressiing: ctl+c")
+            log.info('Reading from HAN-port')
+            print('Got %d bytes:' % len(bytes))
+            log.info('Got %d bytes:' % len(bytes))
+            msg = ('%02x' % int(codecs.encode(bytes, 'hex'), 16)).upper()
+            msg = ' '.join(msg[i:i+2] for i in range(0, len(msg), 2))                      
+            print(msg)              
+            log.info(msg)                   
+            log.info('Stop reading from HAN-port')
+        else:                                     
+            log.warning('Got nothing!')   
+except KeyboardInterrupt:
+    pass
